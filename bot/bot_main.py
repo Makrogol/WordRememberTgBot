@@ -7,8 +7,8 @@ from telegram.ext import Application, ContextTypes, CommandHandler, CallbackCont
 from core.trigger import Trigger
 from core.word import try_create_from_args
 from core.words_file_manager import WordsFileManager
-from core.config import BAD_ADDING_NEW_WORD_TEXT, START_TEXT, HELP_TEXT, BAD_SETTING_INTERVALS_TEXT, INTERVALS_TEST, \
-    SHOW_CURRENT_INTERVALS_TEXT, INTERVALS_TEST_TEXT, ADDING_NEW_WORD_TEXT, SET_INTERVALS_TEXT
+from core.config import BAD_ADDING_NEW_WORD_TEXT, START_TEXT, HELP_TEXT, BAD_SETTING_INTERVALS_TEXT, INTERVALS, \
+    SHOW_CURRENT_INTERVALS_TEXT, INTERVALS_TEXT, ADDING_NEW_WORD_TEXT, SET_INTERVALS_TEXT
 from core.intervals_parser import IntervalsParser
 
 
@@ -41,7 +41,7 @@ class Bot:
             return
         WordsFileManager.save_word_to_file(update.effective_user.id, word.get_full_word())
 
-        trigger = Trigger(context.user_data.get('intervals', INTERVALS_TEST))
+        trigger = Trigger(context.user_data.get('intervals', INTERVALS))
 
         async def call_back(context: CallbackContext):
             await context.bot.send_message(chat_id=update.effective_chat.id, text=word.get_random_spoiler_word(),
@@ -78,4 +78,4 @@ class Bot:
     async def show_current_intervals(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(chat_id=update.effective_chat.id,
                                        text=SHOW_CURRENT_INTERVALS_TEXT +
-                                            context.user_data.get('intervals_text', INTERVALS_TEST_TEXT))
+                                            context.user_data.get('intervals_text', INTERVALS_TEXT))

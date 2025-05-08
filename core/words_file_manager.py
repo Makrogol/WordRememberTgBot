@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from .config import MAX_MESSAGE_LENGTH_TEST, USER_WORD_DATA_PATH
+from .config import MAX_MESSAGE_LENGTH, USER_WORD_DATA_PATH
 
 
 class WordsFileManager:
@@ -15,7 +15,7 @@ class WordsFileManager:
         message_len = 0
         prev_i = 0
         for i in range(len(words)):
-            if message_len + len(words[i]) > MAX_MESSAGE_LENGTH_TEST:
+            if message_len + len(words[i]) > MAX_MESSAGE_LENGTH:
                 paginated_words.append(''.join(words[prev_i:i]))
                 prev_i = i
                 message_len = 0
