@@ -1,15 +1,5 @@
-left left - right right
-left left - right right
-left left - right right
-l - r
-l - r
-lf - rf
-lf - rf
-lf - rf
-lf - rf
-lf - rf
-lf - rf
-lf - rf
-lf - rf
-lf - rf
-lf - rf
+пр - лв
+kj - kj
+gh - hj jh
+jh - jh. h
+gh - gh

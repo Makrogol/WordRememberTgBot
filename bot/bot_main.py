@@ -19,6 +19,7 @@ class Bot:
             .build()
         self.bot.add_handler(CommandHandler('start', self.start))
         self.bot.add_handler(CommandHandler('add_new_word', self.add_new_word))
+        self.bot.add_handler(CommandHandler('anw', self.add_new_word))
         self.bot.add_handler(CommandHandler('get_all_words', self.get_all_words))
         self.bot.add_handler(CommandHandler('get_all_words_as_file', self.get_all_words_as_file))
         self.bot.add_handler(CommandHandler('set_intervals', self.set_intervals))
@@ -35,6 +36,7 @@ class Bot:
 
     @staticmethod
     async def add_new_word(update: Update, context: ContextTypes.DEFAULT_TYPE):
+        print(context.args)
         word = try_create_from_args(context.args)
         if word is None:
             await context.bot.send_message(chat_id=update.effective_chat.id, text=BAD_ADDING_NEW_WORD_TEXT)

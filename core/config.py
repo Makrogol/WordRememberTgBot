@@ -21,11 +21,12 @@ BASE_PATH = Path(__file__).parent.parent
 USER_WORD_DATA_DIRECTORY_NAME = "user_word_data"
 USER_WORD_DATA_PATH = BASE_PATH / USER_WORD_DATA_DIRECTORY_NAME
 
-SET_INTERVALS_COMMAND_EXAMPLE_TEXT = "/set_interval 10s 20m 1h 4d 1d2h40m15s"
+SET_INTERVALS_COMMAND_EXAMPLE_TEXT = "/set_intervals 10s 20m 1h 4d 1d2h40m15s"
 
 HELP_TEXT = ("/add_new_word - добавит новое слово для повторения. "
              "Я буду отправлять его тебе через некоторые промежутки времени. "
              "Случайная часть слова будет закрыта спойлером, чтобы ты мог проверить свои знания. "
+             "Для краткости можно использовать команду /anw она делает ровно тоже самое. "
              "Пример команды: /add_new_word glass - стекло, бокал\n"
              "/get_all_words - выведет тебе список всех слов, которые ты когда либо мне отправлял\n"
              "/get_all_words_as_file - пришлет тебе файл со списком всех слов, которые ты когда-либо мне отправлял\n"
