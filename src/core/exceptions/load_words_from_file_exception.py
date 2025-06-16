@@ -1,0 +1,2 @@
+class LoadWordsFromFileException(Exception):
+    pass

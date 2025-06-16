@@ -5,16 +5,16 @@ import asyncio
 from telegram.constants import ParseMode
 
 from src.bot.bot_main import Bot
-from src.bot.message.paginated_message import PaginatedMessages
+from src.core.paginated_message import PaginatedMessages
 from src.core.intervals.intervals_parser import try_parse_intervals
 from src.core.word.config import USER_WORD_DATA_PATH
 from src.core.word.word_parser import try_parse_word
-from src.core.word.words_file_management import create_path_to_user_word_data
+from src.core.word.manager import create_path_to_user_word_data
 from test.config import DEFAULT_USER_ID
 from test.core.mock_context import MockContext
 from test.core.mock_update import MockUpdate
 from config import DEFAULT_CHAT_ID
-from src.bot.message.config import START_TEXT, HELP_TEXT, SHOW_CURRENT_INTERVALS_TEXT, BAD_SETTING_INTERVALS_TEXT, \
+from src.bot.messages import START_TEXT, HELP_TEXT, SHOW_CURRENT_INTERVALS_TEXT, BAD_SETTING_INTERVALS_TEXT, \
     SET_INTERVALS_TEXT, BAD_ADDING_NEW_WORD_TEXT, ADDING_NEW_WORD_TEXT, FILE_DOES_NOT_EXIST_TEXT, WORDS_ARE_EMPTY_TEXT
 from src.core.intervals.intervals import Intervals
 

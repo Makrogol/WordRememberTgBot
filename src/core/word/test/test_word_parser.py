@@ -35,8 +35,8 @@ class WordParserTestCase(unittest.TestCase):
 
         self.assertEqual(expected_result, result)
 
-    def test_word_parser_replace_point_to_space(self):
-        expected_result = Word(left_part="hj ", right_part="gh", sentence="qwe rty? fhasdjk* 78419 asda%")
+    def test_word_parser_replace_point_to_escape_point(self):
+        expected_result = Word(left_part="hj\.", right_part="gh", sentence="qwe\.rty? fhasdjk* 78419 asda%")
         result = try_parse_word(["hj.", "-", "gh", "-", "qwe.rty?", "fhasdjk*", "78419", "asda%"])
 
         self.assertEqual(expected_result, result)

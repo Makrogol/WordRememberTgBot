@@ -14,8 +14,8 @@ def clear_part_of_word(part_of_word: str) -> str:
     # Первый этап - трим
     part_of_word = part_of_word.strip()
 
-    # Второй этап - заменяем точки на пробелы
-    return part_of_word.replace(REPLACE_CHARS, " ")
+    # Второй этап - экранируем точки
+    return part_of_word.replace(REPLACE_CHARS, "\.")
 
 
 def try_parse_word(args: list[str]) -> Word | None:
@@ -36,3 +36,17 @@ def try_parse_word(args: list[str]) -> Word | None:
         return Word(left_part, right_part, sentence)
     except:
         return None
+
+# TODO унести в какой-то другой парсер
+def try_parse_number(args: list[str]) -> int | None:
+    try:
+        number = int(args[0])
+        return number
+    except:
+        return None
+
+
+def try_parse_number_and_word(args: list[str]) -> (int | None, Word | None):
+    number = try_parse_number(args)
+    word = try_parse_word(args[1:])
+    return number, word

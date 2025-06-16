@@ -1,0 +1,2 @@
+class AddWordToFileException(Exception):
+    pass

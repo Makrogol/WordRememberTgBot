@@ -1,0 +1,2 @@
+class WordParseException(Exception):
+    pass

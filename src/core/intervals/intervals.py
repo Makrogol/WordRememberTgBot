@@ -15,6 +15,26 @@ class Intervals:
             accumulate_sum += interval
             self.__intervals_as_accumulate_sum.append(accumulate_sum)
 
+    def to_json(self) -> dict:
+        return {
+            "intervals_as_letters": self.__intervals_as_letters,
+            "intervals_as_timedelta": [interval_timedelta.total_seconds() for interval_timedelta in
+                                       self.__intervals_as_timedelta],
+        }
+
+    def from_json(self, data: dict) -> None:
+        self.__intervals_as_letters = data['intervals_as_letters']
+        self.__intervals_as_timedelta = [timedelta(seconds=interval_timedelta) for interval_timedelta in
+                                         data['intervals_as_timedelta']]
+
+        self.__intervals_as_string = ' '.join(self.__intervals_as_letters)
+        self.__intervals_as_accumulate_sum = []
+
+        accumulate_sum = timedelta(0)
+        for interval in self.__intervals_as_timedelta:
+            accumulate_sum += interval
+            self.__intervals_as_accumulate_sum.append(accumulate_sum)
+
     def get_as_string(self):
         return self.__intervals_as_string
 

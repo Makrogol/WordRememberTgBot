@@ -1,8 +1,7 @@
 from datetime import timedelta
 
+from .config import TIME_LETTERS
 from .intervals import Intervals
-
-TIME_LETTERS = ['s', 'm', 'h', 'd']
 
 
 def try_parse_intervals(intervals_as_letters: list[str]) -> Intervals | None:

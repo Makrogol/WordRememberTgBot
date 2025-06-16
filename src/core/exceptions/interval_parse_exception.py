@@ -1,0 +1,2 @@
+class IntervalParseException(Exception):
+    pass

@@ -16,3 +16,5 @@ INTERVALS_AS_STRING = '20m 1h 8h 1d 4d'
 INTERVALS_AS_TIMEDELTA_TEST = [timedelta(seconds=1), timedelta(seconds=2), timedelta(seconds=5), timedelta(seconds=10)]
 INTERVALS_AS_LETTERS_TEST = ['1s', '2s', '5s', '10s']
 INTERVALS_AS_STRING_TEST = '1s 2s 5s 10s'
+
+TIME_LETTERS = ['s', 'm', 'h', 'd']

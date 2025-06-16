@@ -1,8 +1,10 @@
 import unittest
+from datetime import timedelta
 from string import punctuation, ascii_letters
 
+from src.core.intervals.config import TIME_LETTERS
 from src.core.intervals.intervals import Intervals
-from src.core.intervals.intervals_parser import try_parse_intervals, TIME_LETTERS
+from src.core.intervals.intervals_parser import try_parse_intervals
 
 
 class IntervalParserTestCase(unittest.TestCase):
