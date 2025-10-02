@@ -9,7 +9,9 @@ from src.core.paginated_message.config import MAX_MESSAGE_LENGTH_TEST
 # Обрезаем его под макс длину
 
 class PaginatedMessages:
-    def __init__(self, max_message_length: int = MAX_MESSAGE_LENGTH_TEST):
+    def __init__(self, max_message_length: int = None):
+        if max_message_length is None:
+            max_message_length = MAX_MESSAGE_LENGTH_TEST
         self.__max_message_length: int = max_message_length
         self.__paginated_messages: list[str] = []
 

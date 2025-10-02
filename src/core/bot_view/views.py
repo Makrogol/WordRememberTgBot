@@ -1,105 +1,144 @@
-from src.core.bot_view.result.add_new_word_result import AddNewWordResult, AddNewWordResultType
-from src.core.bot_view.result.fix_word_by_number_result import FixWordByNumberResult, FixWordByNumberResultType
-from src.core.bot_view.result.get_all_words_as_file_result import GetAllWordsAsFileResult, \
-    GetAllWordsAsFileResultType
-from src.core.bot_view.result.get_all_words_result import GetAllWordsResult, GetAllWordsResultType
-from src.core.bot_view.result.repeat_result import RepeatResult, RepeatResultType
-from src.core.bot_view.result.set_intervals_result import SetIntervalsResult, SetIntervalsResultType
-from src.core.paginated_message.paginated_message import PaginatedMessages
+from src.output.command_messages.add_new_word_messages import AddNewWordMessages
+from src.output import FixWordByNumberMessages
+from src.output import GetAllWordsAsFileMessages
+from src.output.command_messages.get_all_words_messages import GetAllWordsMessages
+from src.output.command_messages.help_messages import HelpMessages
+from src.output.command_messages.repeat_messages import RepeatMessages
+from src.output.command_messages.set_intervals_messages import SetIntervalsMessages
+from src.output import ShowCurrentIntervalsMessages
+from src.output.command_messages.start_messages import StartMessages
+from src.output.command_messages.statistics_by_words_messages import StatisticsByWordsMessages
+from src.output.command_messages.statistics_messages import StatisticsMessages
+from src.output import HELP_MESSAGES_BY_COMMANDS
+from src.output.message import Message, Messages
+from src.output.message.text_message import TextMessage
+from src.core.command.commands_parser import try_parse_command
 from src.core.bot_view.view_data import ViewData
 from src.core.intervals.intervals_parser import try_parse_intervals
 from src.core.file_manager.user_data_manager import UserDataManager
 from src.core.file_manager.words_manager import WordsManager
+from src.core.user_data.user_data import UserData
+from src.core.word.word import Words
 from src.core.word.word_parser import try_parse_word, try_parse_number_and_word, try_parse_number
 
 
-def add_new_word_view(view_data: ViewData) -> AddNewWordResult:
-    user_data_manger = UserDataManager(view_data.user_id)
-    user_data = user_data_manger.get_or_create_user_data(view_data.user_name)
+def add_new_word_view(view_data: ViewData) -> Message:
+    user_data_manager = UserDataManager(view_data.user_identifier_data)
+    user_data: UserData = user_data_manager.get_or_create_user_data()
     word = try_parse_word(view_data.args)
     if word is None:
-        return AddNewWordResult(result=AddNewWordResultType.CannotParseWord)
+        return AddNewWordMessages.cannot_parse_word_message()
 
-    words_manager = WordsManager(view_data.user_id)
+    words_manager = WordsManager(view_data.user_identifier_data.id)
+    word.update_counter()
     if not words_manager.try_add_word_to_file(word):
-        return AddNewWordResult(result=AddNewWordResultType.CannotAddWordToFile)
+        return AddNewWordMessages.cannot_add_word_to_file_message()
 
-    return AddNewWordResult(word, user_data.intervals, AddNewWordResultType.Success)
+    return AddNewWordMessages.success_add_new_word_message(word, user_data.intervals)
 
 
-def fix_word_by_number_view(view_data: ViewData) -> FixWordByNumberResult:
+def fix_word_by_number_view(view_data: ViewData) -> Message:
     number, word = try_parse_number_and_word(view_data.args)
     if number is None or word is None:
-        return FixWordByNumberResult(result=FixWordByNumberResultType.CannotParseNumberOrWord)
+        return FixWordByNumberMessages.cannot_parse_number_or_word()
 
     # Для пользователя нумерация начинается с 1
     idx = number - 1
-    words_manager = WordsManager(view_data.user_id)
+    words_manager = WordsManager(view_data.user_identifier_data.id)
     if not words_manager.has_words():
-        return FixWordByNumberResult(result=FixWordByNumberResultType.NoWords)
+        return FixWordByNumberMessages.no_words()
 
     words = words_manager.try_load_from_file()
     if words is None:
-        return FixWordByNumberResult(result=FixWordByNumberResultType.CannotLoadWordsFromFile)
+        return FixWordByNumberMessages.cannot_load_words_from_file()
     if 0 <= idx < len(words):
         words[idx] = word
         words_manager.save_to_file(words)
-        return FixWordByNumberResult(result=FixWordByNumberResultType.Success)
+        return FixWordByNumberMessages.success_fix_word_by_number()
     # TODO сделать фичу, что если изменяешь слово по индексу, который сразу после последнего из имеющихся,
     #  то мы просто добавляем это слово в словарь
     else:
-        return FixWordByNumberResult(result=FixWordByNumberResultType.IncorrectIndex)
+        return FixWordByNumberMessages.incorrect_index()
 
 
-def get_all_words_as_file_view(view_data: ViewData) -> GetAllWordsAsFileResult:
-    words_manager = WordsManager(view_data.user_id)
-    if not words_manager.try_update_words_output_file():
-        return GetAllWordsAsFileResult(result=GetAllWordsAsFileResultType.CannotUpdateOutputFile)
-
+def get_all_words_as_file_view(view_data: ViewData) -> Message:
+    words_manager = WordsManager(view_data.user_identifier_data.id)
     if not words_manager.has_words():
-        return GetAllWordsAsFileResult(result=GetAllWordsAsFileResultType.NoWords)
+        return GetAllWordsAsFileMessages.no_words()
 
-    return GetAllWordsAsFileResult(words_manager.get_words_output_file_path(), GetAllWordsAsFileResultType.Success)
+    return GetAllWordsAsFileMessages.success_get_all_words_as_file(words_manager.try_load_from_file())
 
 
-def get_all_words_view(view_data: ViewData) -> GetAllWordsResult:
-    words_manager = WordsManager(view_data.user_id)
+def get_all_words_view(view_data: ViewData) -> Messages:
+    words_manager = WordsManager(view_data.user_identifier_data.id)
     if not words_manager.has_words():
-        return GetAllWordsResult(result=GetAllWordsResultType.NoWords)
+        return GetAllWordsMessages.no_words()
 
-    words = words_manager.try_load_words_from_output_file()
-    paginated_messages = PaginatedMessages()
-    paginated_messages.add(words)
-    return GetAllWordsResult(paginated_messages, GetAllWordsResultType.Success)
+    return GetAllWordsMessages.success_get_all_words(words_manager.try_load_from_file())
 
 
-def repeat_view(view_data: ViewData) -> RepeatResult:
-    number = try_parse_number(view_data.args)
+def help_view(view_data: ViewData) -> Message:
+    command: str | None = try_parse_command(view_data.args)
+    if command is None:
+        return TextMessage(text=HelpMessages.HELP_TEXT)
+
+    return TextMessage(text=HELP_MESSAGES_BY_COMMANDS[command])
+
+
+def repeat_view(view_data: ViewData) -> Message:
+    number: int | None = try_parse_number(view_data.args)
     if number is None:
-        return RepeatResult(result=RepeatResultType.CannotParseNumber)
+        return RepeatMessages.cannot_parse_number()
 
     idx = number - 1
-    user_data_manger = UserDataManager(view_data.user_id)
-    user_data = user_data_manger.get_or_create_user_data(view_data.user_name)
+    user_data_manager = UserDataManager(view_data.user_identifier_data)
+    user_data: UserData = user_data_manager.get_or_create_user_data()
 
-    words_manager = WordsManager(view_data.user_id)
-    words = words_manager.try_load_from_file()
+    words_manager = WordsManager(view_data.user_identifier_data.id)
+    words: Words | None = words_manager.try_load_from_file()
     if words is None:
-        return RepeatResult(result=RepeatResultType.CannotLoadWordsFromFile)
+        return RepeatMessages.cannot_load_words_from_file()
     if 0 <= idx < len(words):
         word = words[idx]
-        return RepeatResult(word, user_data.intervals, RepeatResultType.Success)
+        words[idx].update_counter()
+        words_manager.save_to_file(words)
+        return RepeatMessages.success_repeat_message(word, user_data.intervals)
     else:
-        return RepeatResult(result=RepeatResultType.IncorrectIndex)
+        return RepeatMessages.incorrect_index()
 
 
-def set_intervals_view(view_data: ViewData) -> SetIntervalsResult:
+def set_intervals_view(view_data: ViewData) -> Message:
     intervals = try_parse_intervals(view_data.args)
     if intervals is None:
-        return SetIntervalsResult(result=SetIntervalsResultType.CannotParseIntervals)
+        return SetIntervalsMessages.cannot_parse_intervals()
 
-    user_data_manger = UserDataManager(view_data.user_id)
-    user_data = user_data_manger.get_or_create_user_data(view_data.user_name)
+    user_data_manager = UserDataManager(view_data.user_identifier_data)
+    user_data: UserData = user_data_manager.get_or_create_user_data()
     user_data.intervals = intervals
-    user_data_manger.save_to_file(user_data)
-    return SetIntervalsResult(result=SetIntervalsResultType.Success)
+    user_data_manager.save_to_file(user_data)
+    return SetIntervalsMessages.success_set_intervals()
+
+
+def show_current_intervals_view(view_data: ViewData) -> Message:
+    user_data_manager = UserDataManager(view_data.user_identifier_data)
+    user_data: UserData = user_data_manager.get_or_create_user_data()
+    return ShowCurrentIntervalsMessages.success_show_current_intervals(user_data.intervals)
+
+
+def start_view(view_data: ViewData) -> Message:
+    return TextMessage(text=StartMessages.START_TEXT)
+
+
+def statistics_view(view_data: ViewData) -> Message:
+    user_data_manager = UserDataManager(view_data.user_identifier_data)
+    user_data: UserData = user_data_manager.get_or_create_user_data()
+    return StatisticsMessages.success_statistics(user_data.statistics)
+
+
+def statistics_by_words_view(view_data: ViewData) -> Messages:
+    words_manager = WordsManager(view_data.user_identifier_data.id)
+    words: Words | None = words_manager.try_load_from_file()
+    if words is None:
+        return StatisticsByWordsMessages.no_words()
+
+    return StatisticsByWordsMessages.success_statistics_by_words(words)

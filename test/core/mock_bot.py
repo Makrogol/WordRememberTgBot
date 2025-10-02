@@ -14,9 +14,10 @@ class MockBot(object):
         if parse_mode is not None:
             self.__parse_modes.append(parse_mode)
 
-    async def send_document(self, chat_id, document):
+    async def send_document(self, chat_id, document, caption):
         self.__chat_ids.append(chat_id)
         self.__documents.append(document)
+        self.__messages.append(caption)
 
     def get_chat_ids(self):
         return self.__chat_ids
@@ -29,3 +30,9 @@ class MockBot(object):
 
     def get_parse_modes(self):
         return self.__parse_modes
+
+    def clear(self):
+        self.__messages = []
+        self.__chat_ids = []
+        self.__documents = []
+        self.__parse_modes = []

@@ -1,5 +1,7 @@
+from src.core.user.user_identifier_data import UserIdentifierData
+
+
 class ViewData:
-    def __init__(self, user_id: int, user_name: str, args: list[str]):
-        self.user_id = user_id
-        self.user_name = user_name
+    def __init__(self, user_identifier_data: UserIdentifierData = UserIdentifierData(), args: list[str] = []):
+        self.user_identifier_data = user_identifier_data
         self.args = args
